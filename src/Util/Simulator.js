@@ -60,8 +60,10 @@ export class Result{
     spt;
     rec;
     lv;
+    isOver;
+    remainingBp;
     constructor(
-        vtl,str,tgh,qui,mgc,lv
+        vtl,str,tgh,qui,mgc,lv,isOver,remainingBp
     ){
         this.vtl = vtl;
         this.str = str;
@@ -69,6 +71,8 @@ export class Result{
         this.qui = qui;
         this.mgc = mgc;
         this.lv = lv;
+        this.isOver = isOver;
+        this.remainingBp = remainingBp;
         [this.hp,this.mp,this.atk,this.def,this.dex,this.spt,this.rec,] = BP2status([vtl,str,tgh,qui,mgc]);
     }
 }
@@ -90,11 +94,12 @@ export class Simulator{
     growthQui;
     growthMgc;
     growthRatio;
+    bpDistribute
     constructor(
         maxVtl,maxStr,maxTgh,maxQui,maxMgc,
         droppedVtl,droppedStr,droppedTgh,droppedQui,droppedMgc,
         randomVtl,randomStr,randomTgh,randomQui,randomMgc,
-        growthRatio
+        growthRatio,bpDistribute
     ){
         this.vtl = maxVtl - droppedVtl;
         this.str = maxStr - droppedStr;
@@ -107,6 +112,7 @@ export class Simulator{
         this.randomQui = randomQui;
         this.randomMgc = randomMgc;
         this.growthRatio = growthRatio;
+        this.bpDistribute = bpDistribute;
         this.growthVtl = GROW_VALUE[this.vtl];
         this.growthStr = GROW_VALUE[this.str];
         this.growthTgh = GROW_VALUE[this.tgh];
@@ -122,16 +128,52 @@ export class Simulator{
             (this.qui+this.randomQui)*this.growthRatio/100,
             (this.mgc+this.randomMgc)*this.growthRatio/100,
             1,
+            false,
+            0,
         ));
         for(let lv=2; lv<=maxLv; lv++){
             let lastLv = results[results.length-1];
+            let newVtl = lastLv.vtl+this.growthVtl;
+            let newStr = lastLv.str+this.growthStr;
+            let newTgh = lastLv.tgh+this.growthTgh;
+            let newQui = lastLv.qui+this.growthQui;
+            let newMgc = lastLv.mgc+this.growthMgc;
+            let limit = ~~((~~newVtl+~~newStr+
+                        ~~newTgh+~~newQui+~~newMgc+freeBp[lv-2].reduce((x,y)=>x+y,0))/2);
+            let addedNewVtl = newVtl+freeBp[lv-2][0];
+            let addedNewStr = newStr+freeBp[lv-2][1];
+            let addedNewTgh = newTgh+freeBp[lv-2][2];
+            let addedNewQui = newQui+freeBp[lv-2][3];
+            let addedNewMgc = newMgc+freeBp[lv-2][4];
+            let isOver = false;
+            let remainingBp = lastLv.remainingBp;
+            if (~~addedNewVtl>limit ||
+                    ~~addedNewStr>limit ||
+                    ~~addedNewTgh>limit ||
+                    ~~addedNewQui>limit ||
+                    ~~addedNewMgc>limit){
+                isOver=true;
+                remainingBp++;
+                freeBp[lv-2] = [0,0,0,0,0];
+            }else{
+                newVtl = addedNewVtl;
+                newStr = addedNewStr;
+                newTgh = addedNewTgh;
+                newQui = addedNewQui;
+                newMgc = addedNewMgc;
+                if (freeBp[lv-2].join('') === '00000'){
+                    remainingBp++;
+                }
+            }
             results.push(new Result(
-                lastLv.vtl+this.growthVtl+freeBp[lv-2][0],
-                lastLv.str+this.growthStr+freeBp[lv-2][1],
-                lastLv.tgh+this.growthTgh+freeBp[lv-2][2],
-                lastLv.qui+this.growthQui+freeBp[lv-2][3],
-                lastLv.mgc+this.growthMgc+freeBp[lv-2][4],
+                newVtl,
+                newStr,
+                newTgh,
+                newQui,
+                newMgc,
                 lv,
+                isOver,
+                remainingBp,
             ));
         }
         return results;

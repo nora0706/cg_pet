@@ -44,21 +44,20 @@ function App() {
 
   const [freeBp, setFreeBp] = useState(Array.from({ length: MAX_LEVEL }, () => Array(5).fill(0)));
 
-  const [results, setResults] = useState(new Simulator(maxVtl, maxStr, maxTgh, maxQui, maxMgc,
-    droppedVtl, droppedStr, droppedTgh, droppedQui, droppedMgc,
-    randomVtl, randomStr, randomTgh, randomQui, randomMgc,
-    growthRatio).run(MAX_LEVEL, freeBp));
+  const [results, setResults] = useState(new Simulator(25, 25, 25, 25, 25,
+    0, 0, 0, 0, 0,
+    2, 2, 2, 2, 2,
+    20, BP.NONE).run(MAX_LEVEL, Array.from({ length: MAX_LEVEL }, () => Array(5).fill(0))));
 
-  // TODO: let user select point for each level
-  // const UpdateBp = (i, val) => {
-  //   setFreeBp(existingItems => {
-  //     return [
-  //       ...existingItems.slice(0, i),
-  //       val,
-  //       ...existingItems.slice(i + 1),
-  //     ]
-  //   })
-  // }
+  const UpdateBp = (i, val) => {
+    setFreeBp(existingItems => {
+      return [
+        ...existingItems.slice(0, i),
+        val,
+        ...existingItems.slice(i + 1),
+      ]
+    })
+  }
 
   const validateAndCalc = (type, updateFunc, value) => {
     switch (type) {
@@ -77,8 +76,8 @@ function App() {
   useEffect(() => {
     let newDist = Array.from({ length: MAX_LEVEL }, () => Array(5).fill(0));
     if (pointDist >= 0) {
-      for(let lv of newDist){
-          lv[pointDist] = 1;
+      for (let lv of newDist) {
+        lv[pointDist] = 1;
       }
     }
     setFreeBp(newDist);
@@ -88,12 +87,12 @@ function App() {
     let simulator = new Simulator(maxVtl, maxStr, maxTgh, maxQui, maxMgc,
       droppedVtl, droppedStr, droppedTgh, droppedQui, droppedMgc,
       randomVtl, randomStr, randomTgh, randomQui, randomMgc,
-      growthRatio);
+      growthRatio, pointDist);
     setResults(simulator.run(MAX_LEVEL, freeBp));
   }, [maxVtl, maxStr, maxTgh, maxQui, maxMgc,
     droppedVtl, droppedStr, droppedTgh, droppedQui, droppedMgc,
     randomVtl, randomStr, randomTgh, randomQui, randomMgc,
-    growthRatio,freeBp]);
+    growthRatio, freeBp, pointDist]);
 
   return (
     <div className="App">
@@ -120,7 +119,7 @@ function App() {
       </div>
       <div className="input_fields">
         <input name="growth_ratio" type="number" value={growthRatio} onChange={(e) => validateAndCalc(TYPE.RATIO, setGrowthRatio, e.target.value)} />
-        <label htmlFor="none">不加點</label>
+        <label htmlFor="none">不指定</label>
         <input name="bp_distribute" id="none" type="radio" checked={pointDist === BP.NONE} onClick={() => setPointDist(BP.NONE)} label="不加點" />
         <label htmlFor="vtl">體力</label>
         <input name="bp_distribute" id="vtl" type="radio" checked={pointDist === BP.VTL} onClick={() => setPointDist(BP.VTL)} label="體力" />
@@ -138,6 +137,8 @@ function App() {
         <ResultRow
           key={idx}
           result={result}
+          bp={freeBp[idx]}
+          updateBp={UpdateBp}
         />
       ))}
     </div>

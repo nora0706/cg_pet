@@ -8,7 +8,15 @@
 }
 
 .result_row div {
-  width: calc(100%/14);
+  width: calc(100%/17);
   overflow: hidden;
   border: 1px silver solid;
+}
+
+.bp_dist {
+  display: flex;
+}
+
+.bp_dist input {
+  width: 0.5em;
 }
