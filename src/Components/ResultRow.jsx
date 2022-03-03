@@ -25,7 +25,7 @@ function ResultRow(props) {
             <div className="spt">{result.spt.toFixed(2)}</div>
             <div className="rec">{result.rec.toFixed(2)}</div>
             <div className="is_over">{result.isOver ? 1 : 0}</div>
-            {/* <div className="remaining_bp">{result.remainingBp}</div> */}
+            <div className="remaining_bp">{result.remainingBp}</div>
             <div className="bp_dist">
                 <input type="text" value={bp[0]} onChange={e => updateBp(result.lv-1, updateArray(bp,0,parseInt(e.target.value,10)))}></input>
                 <input type="text" value={bp[1]} onChange={e => updateBp(result.lv-1, updateArray(bp,1,parseInt(e.target.value,10)))}></input>
