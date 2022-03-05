@@ -48,6 +48,7 @@ const BP2status = BP => {
 }
 
 export class Result{
+    id;
     vtl;
     str;
     tgh;
@@ -66,6 +67,7 @@ export class Result{
     constructor(
         vtl,str,tgh,qui,mgc,lv,isOver,remainingBp
     ){
+        this.id = lv;
         this.vtl = vtl;
         this.str = str;
         this.tgh = tgh;
