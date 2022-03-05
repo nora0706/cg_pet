@@ -11,29 +11,29 @@ import Paper from '@mui/material/Paper';
 export default function ResultTable(props) {
     let { results, bp, updateBp } = props;
     const updateArray = (array, i, val) => [
-                ...array.slice(0, i),
-                val,
-                ...array.slice(i + 1),
-            ];
+        ...array.slice(0, i),
+        val,
+        ...array.slice(i + 1),
+    ];
     return (
         <TableContainer sx={{ maxHeight: 600 }} component={Paper}>
-            <Table sx={{ minWidth: 1160}} stickyHeader size="small" aria-label="lv table">
+            <Table sx={{ minWidth: 1160 }} stickyHeader size="small" aria-label="lv table">
                 <TableHead>
                     <TableRow>
-                         <TableCell>等級</TableCell>
-                         <TableCell>力量</TableCell>
-                         <TableCell>體力</TableCell>
-                         <TableCell>強度</TableCell>
-                         <TableCell>速度</TableCell>
-                         <TableCell>魔法</TableCell>
-                         <TableCell>生命</TableCell>
-                         <TableCell>魔力</TableCell>
-                         <TableCell>攻擊</TableCell>
-                         <TableCell>防禦</TableCell>
-                         <TableCell>敏捷</TableCell>
-                         <TableCell>精神</TableCell>
-                         <TableCell>回復力</TableCell>
-                         <TableCell>爆點</TableCell>
+                        <TableCell>等級</TableCell>
+                        <TableCell>體力</TableCell>
+                        <TableCell>力量</TableCell>
+                        <TableCell>強度</TableCell>
+                        <TableCell>速度</TableCell>
+                        <TableCell>魔法</TableCell>
+                        <TableCell>生命</TableCell>
+                        <TableCell>魔力</TableCell>
+                        <TableCell>攻擊</TableCell>
+                        <TableCell>防禦</TableCell>
+                        <TableCell>敏捷</TableCell>
+                        <TableCell>精神</TableCell>
+                        <TableCell>回復力</TableCell>
+                        <TableCell>爆點</TableCell>
                         <TableCell>餘點</TableCell>
                         <TableCell>分配</TableCell>
                     </TableRow>
@@ -60,11 +60,11 @@ export default function ResultTable(props) {
                             <TableCell className="is_over">{result.isOver ? 1 : 0}</TableCell>
                             <TableCell className="remaining_bp">{result.remainingBp}</TableCell>
                             <TableCell className="bp_dist">
-                                <input type="text" value={bp[result.lv-1][0]} onChange={e => updateBp(result.lv-1, updateArray(bp[result.lv-1],0,parseInt(e.target.value,10)))}></input>
-                                <input type="text" value={bp[result.lv-1][1]} onChange={e => updateBp(result.lv-1, updateArray(bp[result.lv-1],1,parseInt(e.target.value,10)))}></input>
-                                <input type="text" value={bp[result.lv-1][2]} onChange={e => updateBp(result.lv-1, updateArray(bp[result.lv-1],2,parseInt(e.target.value,10)))}></input>
-                                <input type="text" value={bp[result.lv-1][3]} onChange={e => updateBp(result.lv-1, updateArray(bp[result.lv-1],3,parseInt(e.target.value,10)))}></input>
-                                <input type="text" value={bp[result.lv-1][4]} onChange={e => updateBp(result.lv-1, updateArray(bp[result.lv-1],4,parseInt(e.target.value,10)))}></input>
+                                <input type="text" value={bp[result.lv - 1][0]} onChange={e => updateBp(result.lv - 1, updateArray(bp[result.lv - 1], 0, parseInt(e.target.value, 10)))}></input>
+                                <input type="text" value={bp[result.lv - 1][1]} onChange={e => updateBp(result.lv - 1, updateArray(bp[result.lv - 1], 1, parseInt(e.target.value, 10)))}></input>
+                                <input type="text" value={bp[result.lv - 1][2]} onChange={e => updateBp(result.lv - 1, updateArray(bp[result.lv - 1], 2, parseInt(e.target.value, 10)))}></input>
+                                <input type="text" value={bp[result.lv - 1][3]} onChange={e => updateBp(result.lv - 1, updateArray(bp[result.lv - 1], 3, parseInt(e.target.value, 10)))}></input>
+                                <input type="text" value={bp[result.lv - 1][4]} onChange={e => updateBp(result.lv - 1, updateArray(bp[result.lv - 1], 4, parseInt(e.target.value, 10)))}></input>
                             </TableCell>
                         </TableRow>
                     ))}
