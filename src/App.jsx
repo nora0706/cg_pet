@@ -18,12 +18,11 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import CalculateIcon from '@mui/icons-material/Calculate';
-import FavouriteIcon from "@mui/icons-material/Favorite";
+import PetsIcon from '@mui/icons-material/Pets';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Link from '@mui/material/Link';
-import { pink } from '@mui/material/colors';
 
 
 const MAX_LEVEL = 120;
@@ -197,7 +196,7 @@ function App(props) {
         <Box
           sx={{
             bgcolor: 'background.paper',
-            pt: 8,
+            pt: 6,
             pb: 6,
           }}
         >
@@ -223,16 +222,16 @@ function App(props) {
               spacing={2}
               justifyContent="center"
             >
-              <div>頂檔</div>
               <Stack direction="row" spacing={2} >
+                <Typography style={{ width:100 }}>頂檔</Typography>
                 <TextField style={{ width: 100 }} label="體力" size="small" id="max_vtl" type="number" value={maxVtl} onChange={(e) => validate(TYPE.MAX, setMaxVtl, e.target.value)} />
                 <TextField style={{ width: 100 }} label="力量" size="small" id="max_str" type="number" value={maxStr} onChange={(e) => validate(TYPE.MAX, setMaxStr, e.target.value)} />
                 <TextField style={{ width: 100 }} label="強度" size="small" id="max_tgh" type="number" value={maxTgh} onChange={(e) => validate(TYPE.MAX, setMaxTgh, e.target.value)} />
                 <TextField style={{ width: 100 }} label="速度" size="small" id="max_qui" type="number" value={maxQui} onChange={(e) => validate(TYPE.MAX, setMaxQui, e.target.value)} />
                 <TextField style={{ width: 100 }} label="魔法" size="small" id="max_mgc" type="number" value={maxMgc} onChange={(e) => validate(TYPE.MAX, setMaxMgc, e.target.value)} />
               </Stack>
-              <div>掉檔</div>
               <Stack direction="row" spacing={2}>
+                <Typography style={{ width:100 }}>掉檔</Typography>
                 <TextField style={{ width: 100 }} label="體力" size="small" id="dropped_vtl" type="number" value={droppedVtl} onChange={(e) => validate(TYPE.DROPPED, setDroppedVtl, e.target.value)} />
                 <TextField style={{ width: 100 }} label="力量" size="small" id="dropped_str" type="number" value={droppedStr} onChange={(e) => validate(TYPE.DROPPED, setDroppedStr, e.target.value)} />
                 <TextField style={{ width: 100 }} label="強度" size="small" id="dropped_tgh" type="number" value={droppedTgh} onChange={(e) => validate(TYPE.DROPPED, setDroppedTgh, e.target.value)} />
@@ -240,18 +239,16 @@ function App(props) {
                 <TextField style={{ width: 100 }} label="魔法" size="small" id="dropped_mgc" type="number" value={droppedMgc} onChange={(e) => validate(TYPE.DROPPED, setDroppedMgc, e.target.value)} />
                 {/* <span>{droppedVtl + droppedStr + droppedTgh + droppedQui + droppedMgc}</span> */}
               </Stack>
-              <div>隨機檔</div>
               <Stack direction="row" spacing={2}>
+                <Typography style={{ width:100 }}>隨機檔</Typography>
                 <TextField style={{ width: 100 }} label="體力" size="small" id="random_vtl" type="number" value={randomVtl} onChange={(e) => validate(TYPE.RANDOM, setRandomVtl, e.target.value, (randomStr + randomTgh + randomQui + randomMgc))} />
                 <TextField style={{ width: 100 }} label="力量" size="small" id="random_str" type="number" value={randomStr} onChange={(e) => validate(TYPE.RANDOM, setRandomStr, e.target.value, (randomVtl + randomTgh + randomQui + randomMgc))} />
                 <TextField style={{ width: 100 }} label="強度" size="small" id="random_tgh" type="number" value={randomTgh} onChange={(e) => validate(TYPE.RANDOM, setRandomTgh, e.target.value, (randomVtl + randomStr + randomQui + randomMgc))} />
                 <TextField style={{ width: 100 }} label="速度" size="small" id="random_qui" type="number" value={randomQui} onChange={(e) => validate(TYPE.RANDOM, setRandomQui, e.target.value, (randomVtl + randomStr + randomTgh + randomMgc))} />
                 <TextField style={{ width: 100 }} label="魔法" size="small" id="random_mgc" type="number" value={randomMgc} onChange={(e) => validate(TYPE.RANDOM, setRandomMgc, e.target.value, (randomVtl + randomStr + randomTgh + randomQui))} />
+                <TextField label="成長係數" size="small" id="growth_ratio" type="number" value={growthRatio} onChange={(e) => validate(TYPE.RATIO, setGrowthRatio, e.target.value)} />
                 {/* <span>{randomVtl + randomStr + randomTgh + randomQui + randomMgc}</span> */}
               </Stack>
-              <div>
-                <TextField label="成長係數" size="small" id="growth_ratio" type="number" value={growthRatio} onChange={(e) => validate(TYPE.RATIO, setGrowthRatio, e.target.value)} />
-              </div>
               <FormControl>
                 <FormLabel id="demo-row-radio-buttons-group-label">加點方式</FormLabel>
                 <RadioGroup
@@ -284,7 +281,7 @@ function App(props) {
         <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
           <Typography variant="body2" color="text.secondary" align="center">
             {'Created with '}
-            <FavouriteIcon fontSize="small"  sx={{ color: pink[500] }}  />
+            <PetsIcon fontSize="small" color="primary" />
             {' By 大福@初心摩羯 '}
             {new Date().getFullYear()}
             {'.'}
