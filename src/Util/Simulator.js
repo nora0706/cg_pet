@@ -142,12 +142,12 @@ export class Simulator{
             let newQui = lastLv.qui+this.growthQui;
             let newMgc = lastLv.mgc+this.growthMgc;
             let limit = ~~((~~newVtl+~~newStr+
-                        ~~newTgh+~~newQui+~~newMgc+freeBp[lv-2].reduce((x,y)=>x+y,0))/2);
-            let addedNewVtl = newVtl+freeBp[lv-2][0];
-            let addedNewStr = newStr+freeBp[lv-2][1];
-            let addedNewTgh = newTgh+freeBp[lv-2][2];
-            let addedNewQui = newQui+freeBp[lv-2][3];
-            let addedNewMgc = newMgc+freeBp[lv-2][4];
+                        ~~newTgh+~~newQui+~~newMgc+1)/2);
+            let addedNewVtl = newVtl+(freeBp[lv-2] === 0?1:0);
+            let addedNewStr = newStr+(freeBp[lv-2] === 1?1:0);
+            let addedNewTgh = newTgh+(freeBp[lv-2] === 2?1:0);
+            let addedNewQui = newQui+(freeBp[lv-2] === 3?1:0);
+            let addedNewMgc = newMgc+(freeBp[lv-2] === 4?1:0);
             let isOver = false;
             let remainingBp = lastLv.remainingBp;
             if (~~addedNewVtl>limit ||
@@ -157,14 +157,14 @@ export class Simulator{
                     ~~addedNewMgc>limit){
                 isOver=true;
                 remainingBp++;
-                freeBp[lv-2] = [0,0,0,0,0];
+                freeBp[lv-2] = -1;
             }else{
                 newVtl = addedNewVtl;
                 newStr = addedNewStr;
                 newTgh = addedNewTgh;
                 newQui = addedNewQui;
                 newMgc = addedNewMgc;
-                if (freeBp[lv-2].join('') === '00000'){
+                if (freeBp[lv-2] === -1){
                     remainingBp++;
                 }
             }

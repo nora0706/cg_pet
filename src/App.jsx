@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 import './App.css';
 import ResultTable from './Components/ResultTable';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Simulator } from "./Util/Simulator";
 import CssBaseline from '@mui/material/CssBaseline';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -12,7 +14,16 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Box from '@mui/material/Box';
-
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import CalculateIcon from '@mui/icons-material/Calculate';
+import FavouriteIcon from "@mui/icons-material/Favorite";
+import GitHubIcon from '@mui/icons-material/GitHub';
+import Container from '@mui/material/Container';
+import Stack from '@mui/material/Stack';
+import Link from '@mui/material/Link';
+import { pink } from '@mui/material/colors';
 
 
 const MAX_LEVEL = 120;
@@ -31,7 +42,18 @@ const BP = {
   MGC: 4,
 }
 
-function App() {
+function App(props) {
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+  const theme = React.useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: prefersDarkMode ? 'dark' : 'light',
+        },
+      }),
+    [prefersDarkMode],
+  );
   const [maxVtl, setMaxVtl] = useState(25);
   const [maxStr, setMaxStr] = useState(25);
   const [maxTgh, setMaxTgh] = useState(25);
@@ -55,12 +77,12 @@ function App() {
 
   const [errorMsg, setErrorMsg] = useState('');
 
-  const [freeBp, setFreeBp] = useState(Array.from({ length: MAX_LEVEL }, () => Array(5).fill(0)));
+  const [freeBp, setFreeBp] = useState(Array.from({ length: MAX_LEVEL-1 }, () => -1));
 
   const [results, setResults] = useState(new Simulator(25, 25, 25, 25, 25,
     0, 0, 0, 0, 0,
     2, 2, 2, 2, 2,
-    20, BP.NONE).run(MAX_LEVEL, Array.from({ length: MAX_LEVEL }, () => Array(5).fill(0))));
+    20, BP.NONE).run(MAX_LEVEL, Array.from({ length: MAX_LEVEL }, () => -1)));
   
 
   const [petList, setPetList] = useState([]);
@@ -81,13 +103,11 @@ function App() {
     }
   }, [petList.length]);
   const UpdateBp = (i, val) => {
-    setFreeBp(existingItems => {
-      return [
-        ...existingItems.slice(0, i),
-        val,
-        ...existingItems.slice(i + 1),
-      ]
-    })
+    setFreeBp(existingItems => [
+      ...existingItems.slice(0, i),
+      val,
+      ...existingItems.slice(i + 1),
+    ])
   }
 
   const validate = (type, updateFunc, value, extraVal) => {
@@ -128,13 +148,9 @@ function App() {
     updateFunc(newValue);
   };
   const resetBP = pointDist => {
-    setPointDist(parseInt(pointDist, 10));
-    let newDist = Array.from({ length: MAX_LEVEL }, () => Array(5).fill(0));
-    if (pointDist >= 0) {
-      for (let lv of newDist) {
-        lv[pointDist] = 1;
-      }
-    }
+    const newPointDist = parseInt(pointDist, 10);
+    setPointDist(newPointDist);
+    let newDist = Array.from({ length: MAX_LEVEL }, () => newPointDist);
     setFreeBp(newDist);
   }
 
@@ -167,88 +183,119 @@ function App() {
     growthRatio, freeBp, pointDist]);
 
   return (
-    <div className="App">
+    <ThemeProvider className="App" theme={theme}>
       <CssBaseline />
-      <Box
-        component="form"
-        sx={{
-          '& .MuiTextField-root': { m: 1, width: '25ch' },
-        }}
-        noValidate
-        autoComplete="off"
-      >
-        <div>
-          <Autocomplete
-            disablePortal
-            id="pet-list"
-            loading={petListLoading}
-            autoHighlight
-            autoSelect
-            blurOnSelect
-            options={petList}
-            sx={{ width: 300 }}
-            onChange={(event, newValue) => {
-              loadPet(newValue);
-            }}
-            renderInput={(params) => <TextField {...params} label="寵物名稱" />}
-          />
-        </div>
-        <div>頂檔</div>
-        <div>
-          <TextField label="體力" size="small" id="max_vtl" type="number" value={maxVtl} onChange={(e) => validate(TYPE.MAX, setMaxVtl, e.target.value)} />
-          <TextField label="力量" size="small" id="max_str" type="number" value={maxStr} onChange={(e) => validate(TYPE.MAX, setMaxStr, e.target.value)} />
-          <TextField label="強度" size="small" id="max_tgh" type="number" value={maxTgh} onChange={(e) => validate(TYPE.MAX, setMaxTgh, e.target.value)} />
-          <TextField label="速度" size="small" id="max_qui" type="number" value={maxQui} onChange={(e) => validate(TYPE.MAX, setMaxQui, e.target.value)} />
-          <TextField label="魔法" size="small" id="max_mgc" type="number" value={maxMgc} onChange={(e) => validate(TYPE.MAX, setMaxMgc, e.target.value)} />
-        </div>
-        <div>掉檔</div>
-        <div>
-          <TextField label="體力" size="small" id="dropped_vtl" type="number" value={droppedVtl} onChange={(e) => validate(TYPE.DROPPED, setDroppedVtl, e.target.value)} />
-          <TextField label="力量" size="small" id="dropped_str" type="number" value={droppedStr} onChange={(e) => validate(TYPE.DROPPED, setDroppedStr, e.target.value)} />
-          <TextField label="強度" size="small" id="dropped_tgh" type="number" value={droppedTgh} onChange={(e) => validate(TYPE.DROPPED, setDroppedTgh, e.target.value)} />
-          <TextField label="速度" size="small" id="dropped_qui" type="number" value={droppedQui} onChange={(e) => validate(TYPE.DROPPED, setDroppedQui, e.target.value)} />
-          <TextField label="魔法" size="small" id="dropped_mgc" type="number" value={droppedMgc} onChange={(e) => validate(TYPE.DROPPED, setDroppedMgc, e.target.value)} />
-          {/* <span>{droppedVtl + droppedStr + droppedTgh + droppedQui + droppedMgc}</span> */}
-        </div>
-        <div>隨機檔</div>
-        <div>
-          <TextField label="體力" size="small" id="random_vtl" type="number" value={randomVtl} onChange={(e) => validate(TYPE.RANDOM, setRandomVtl, e.target.value, (randomStr + randomTgh + randomQui + randomMgc))} />
-          <TextField label="力量" size="small" id="random_str" type="number" value={randomStr} onChange={(e) => validate(TYPE.RANDOM, setRandomStr, e.target.value, (randomVtl + randomTgh + randomQui + randomMgc))} />
-          <TextField label="強度" size="small" id="random_tgh" type="number" value={randomTgh} onChange={(e) => validate(TYPE.RANDOM, setRandomTgh, e.target.value, (randomVtl + randomStr + randomQui + randomMgc))} />
-          <TextField label="速度" size="small" id="random_qui" type="number" value={randomQui} onChange={(e) => validate(TYPE.RANDOM, setRandomQui, e.target.value, (randomVtl + randomStr + randomTgh + randomMgc))} />
-          <TextField label="魔法" size="small" id="random_mgc" type="number" value={randomMgc} onChange={(e) => validate(TYPE.RANDOM, setRandomMgc, e.target.value, (randomVtl + randomStr + randomTgh + randomQui))} />
-          {/* <span>{randomVtl + randomStr + randomTgh + randomQui + randomMgc}</span> */}
-        </div>
-        <div>
-          <TextField label="成長係數" size="small" id="growth_ratio" type="number" value={growthRatio} onChange={(e) => validate(TYPE.RATIO, setGrowthRatio, e.target.value)} />
-        </div>
-        <div>
-          <FormControl>
-            <FormLabel id="demo-row-radio-buttons-group-label">加點方式</FormLabel>
-            <RadioGroup
-              row
-              aria-labelledby="demo-row-radio-buttons-group-label"
-              name="row-radio-buttons-group"
-              value={pointDist}
-              onChange={(e) => resetBP(e.target.value)}
+      <AppBar position="relative">
+        <Toolbar>
+          <CalculateIcon sx={{ mr: 2 }} />
+          <Typography variant="h6" color="inherit" noWrap>
+            寵物模擬器
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <main>
+        <Box
+          sx={{
+            bgcolor: 'background.paper',
+            pt: 8,
+            pb: 6,
+          }}
+        >
+          <Container>
+            <div>
+              <Autocomplete
+                disablePortal
+                id="pet-list"
+                loading={petListLoading}
+                autoHighlight
+                autoSelect
+                blurOnSelect
+                options={petList}
+                sx={{ width: 300 }}
+                onChange={(event, newValue) => {
+                  loadPet(newValue);
+                }}
+                renderInput={(params) => <TextField {...params} label="寵物名稱" />}
+              />
+            </div>
+            <Stack
+              sx={{ pt: 4 }}
+              spacing={2}
+              justifyContent="center"
             >
-              <FormControlLabel control={<Radio />} value={BP.NONE} label="不指定" />
-              <FormControlLabel control={<Radio />} value={BP.VTL} label="體力" />
-              <FormControlLabel control={<Radio />} value={BP.STR} label="力量" />
-              <FormControlLabel control={<Radio />} value={BP.TGH} label="強度" />
-              <FormControlLabel control={<Radio />} value={BP.QUI} label="速度" />
-              <FormControlLabel control={<Radio />} value={BP.MGC} label="魔法" />
-            </RadioGroup>
-          </FormControl>
-        </div>
-      </Box>
-      <div>{errorMsg}</div>
-        <ResultTable
-          results={results}
-          bp={freeBp}
-          updateBp={UpdateBp}
-        />
-    </div>
+              <div>頂檔</div>
+              <Stack direction="row" spacing={2} >
+                <TextField style={{ width: 100 }} label="體力" size="small" id="max_vtl" type="number" value={maxVtl} onChange={(e) => validate(TYPE.MAX, setMaxVtl, e.target.value)} />
+                <TextField style={{ width: 100 }} label="力量" size="small" id="max_str" type="number" value={maxStr} onChange={(e) => validate(TYPE.MAX, setMaxStr, e.target.value)} />
+                <TextField style={{ width: 100 }} label="強度" size="small" id="max_tgh" type="number" value={maxTgh} onChange={(e) => validate(TYPE.MAX, setMaxTgh, e.target.value)} />
+                <TextField style={{ width: 100 }} label="速度" size="small" id="max_qui" type="number" value={maxQui} onChange={(e) => validate(TYPE.MAX, setMaxQui, e.target.value)} />
+                <TextField style={{ width: 100 }} label="魔法" size="small" id="max_mgc" type="number" value={maxMgc} onChange={(e) => validate(TYPE.MAX, setMaxMgc, e.target.value)} />
+              </Stack>
+              <div>掉檔</div>
+              <Stack direction="row" spacing={2}>
+                <TextField style={{ width: 100 }} label="體力" size="small" id="dropped_vtl" type="number" value={droppedVtl} onChange={(e) => validate(TYPE.DROPPED, setDroppedVtl, e.target.value)} />
+                <TextField style={{ width: 100 }} label="力量" size="small" id="dropped_str" type="number" value={droppedStr} onChange={(e) => validate(TYPE.DROPPED, setDroppedStr, e.target.value)} />
+                <TextField style={{ width: 100 }} label="強度" size="small" id="dropped_tgh" type="number" value={droppedTgh} onChange={(e) => validate(TYPE.DROPPED, setDroppedTgh, e.target.value)} />
+                <TextField style={{ width: 100 }} label="速度" size="small" id="dropped_qui" type="number" value={droppedQui} onChange={(e) => validate(TYPE.DROPPED, setDroppedQui, e.target.value)} />
+                <TextField style={{ width: 100 }} label="魔法" size="small" id="dropped_mgc" type="number" value={droppedMgc} onChange={(e) => validate(TYPE.DROPPED, setDroppedMgc, e.target.value)} />
+                {/* <span>{droppedVtl + droppedStr + droppedTgh + droppedQui + droppedMgc}</span> */}
+              </Stack>
+              <div>隨機檔</div>
+              <Stack direction="row" spacing={2}>
+                <TextField style={{ width: 100 }} label="體力" size="small" id="random_vtl" type="number" value={randomVtl} onChange={(e) => validate(TYPE.RANDOM, setRandomVtl, e.target.value, (randomStr + randomTgh + randomQui + randomMgc))} />
+                <TextField style={{ width: 100 }} label="力量" size="small" id="random_str" type="number" value={randomStr} onChange={(e) => validate(TYPE.RANDOM, setRandomStr, e.target.value, (randomVtl + randomTgh + randomQui + randomMgc))} />
+                <TextField style={{ width: 100 }} label="強度" size="small" id="random_tgh" type="number" value={randomTgh} onChange={(e) => validate(TYPE.RANDOM, setRandomTgh, e.target.value, (randomVtl + randomStr + randomQui + randomMgc))} />
+                <TextField style={{ width: 100 }} label="速度" size="small" id="random_qui" type="number" value={randomQui} onChange={(e) => validate(TYPE.RANDOM, setRandomQui, e.target.value, (randomVtl + randomStr + randomTgh + randomMgc))} />
+                <TextField style={{ width: 100 }} label="魔法" size="small" id="random_mgc" type="number" value={randomMgc} onChange={(e) => validate(TYPE.RANDOM, setRandomMgc, e.target.value, (randomVtl + randomStr + randomTgh + randomQui))} />
+                {/* <span>{randomVtl + randomStr + randomTgh + randomQui + randomMgc}</span> */}
+              </Stack>
+              <div>
+                <TextField label="成長係數" size="small" id="growth_ratio" type="number" value={growthRatio} onChange={(e) => validate(TYPE.RATIO, setGrowthRatio, e.target.value)} />
+              </div>
+              <FormControl>
+                <FormLabel id="demo-row-radio-buttons-group-label">加點方式</FormLabel>
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  name="row-radio-buttons-group"
+                  value={pointDist}
+                  onChange={(e) => resetBP(e.target.value)}
+                >
+                  <FormControlLabel control={<Radio />} value={BP.NONE} label="不指定" />
+                  <FormControlLabel control={<Radio />} value={BP.VTL} label="體力" />
+                  <FormControlLabel control={<Radio />} value={BP.STR} label="力量" />
+                  <FormControlLabel control={<Radio />} value={BP.TGH} label="強度" />
+                  <FormControlLabel control={<Radio />} value={BP.QUI} label="速度" />
+                  <FormControlLabel control={<Radio />} value={BP.MGC} label="魔法" />
+                </RadioGroup>
+              </FormControl>
+            </Stack>
+            <div>{errorMsg}</div>
+          </Container>
+        </Box>
+        <Container>
+          <ResultTable
+            results={results}
+            bp={freeBp}
+            updateBp={UpdateBp}
+          />
+        </Container>
+        </main>
+        <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
+          <Typography variant="body2" color="text.secondary" align="center">
+            {'Created with '}
+            <FavouriteIcon fontSize="small"  sx={{ color: pink[500] }}  />
+            {' By 大福@初心摩羯 '}
+            {new Date().getFullYear()}
+            {'.'}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" align="center">
+          <Link color="inherit" href="https://github.com/nora0706/cg_pet/">
+            <GitHubIcon />
+          </Link>
+          </Typography>
+        </Box>
+    </ThemeProvider>
   );
 }
 
