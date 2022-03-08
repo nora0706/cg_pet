@@ -97,12 +97,13 @@ export class Simulator{
     growthQui;
     growthMgc;
     growthRatio;
-    bpDistribute
+    bpDistribute;
+    bpDistribute2;
     constructor(
         maxVtl,maxStr,maxTgh,maxQui,maxMgc,
         droppedVtl,droppedStr,droppedTgh,droppedQui,droppedMgc,
         randomVtl,randomStr,randomTgh,randomQui,randomMgc,
-        growthRatio,bpDistribute
+        growthRatio,bpDistribute,bpDistribute2
     ){
         this.vtl = maxVtl - droppedVtl;
         this.str = maxStr - droppedStr;
@@ -116,6 +117,7 @@ export class Simulator{
         this.randomMgc = randomMgc;
         this.growthRatio = growthRatio;
         this.bpDistribute = bpDistribute;
+        this.bpDistribute2 = bpDistribute2;
         this.growthVtl = GROW_VALUE[this.vtl];
         this.growthStr = GROW_VALUE[this.str];
         this.growthTgh = GROW_VALUE[this.tgh];
@@ -155,9 +157,18 @@ export class Simulator{
                     ~~addedNewTgh>limit ||
                     ~~addedNewQui>limit ||
                     ~~addedNewMgc>limit){
-                isOver=true;
-                remainingBp++;
-                freeBp[lv-2] = -1;
+                if (this.bpDistribute2 !== -1 && this.bpDistribute2 !== this.bpDistribute){
+                    newVtl += (this.bpDistribute2 === 0?1:0);
+                    newStr += (this.bpDistribute2 === 1?1:0);
+                    newTgh += (this.bpDistribute2 === 2?1:0);
+                    newQui += (this.bpDistribute2 === 3?1:0);
+                    newMgc += (this.bpDistribute2 === 4?1:0);
+                    freeBp[lv-2] = this.bpDistribute2;
+                }else{
+                    isOver=true;
+                    remainingBp++;
+                    freeBp[lv-2] = -1;
+                }
             }else{
                 newVtl = addedNewVtl;
                 newStr = addedNewStr;

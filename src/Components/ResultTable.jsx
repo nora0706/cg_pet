@@ -48,7 +48,7 @@ function ResultTable(props) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {results.map((result) => (
+                    {results?.map((result) => (
                         <TableRow
                             key={result.lv}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 }}}
@@ -71,15 +71,40 @@ function ResultTable(props) {
                             {result.lv > 1 ?
                                 <TableCell className="bp_dist">
                                     <Stack direction="row">
-                                    <input type="radio" name={'lv'+result.lv} checked={bp[result.lv - 2]===0} onChange={e => updateBp(result.lv - 2, 0)} />
+                                    <input
+                                        type="radio" 
+                                        disabled={(bp[result.lv - 2]!==0)&&(~~result.vtl>=~~((~~result.vtl+~~result.str+~~result.tgh+~~result.qui+~~result.mgc)/2))} 
+                                        name={'lv'+result.lv}
+                                        checked={bp[result.lv - 2]===0}
+                                        onChange={e => updateBp(result.lv - 2, 0)} />
                                 
-                                    <input type="radio" name={'lv'+result.lv} checked={bp[result.lv - 2]===1} onChange={e => updateBp(result.lv - 2, 1)} />
+                                    <input
+                                        type="radio" 
+                                        disabled={(bp[result.lv - 2]!==1)&&(~~result.str>=~~((~~result.vtl+~~result.str+~~result.tgh+~~result.qui+~~result.mgc)/2))} 
+                                        name={'lv'+result.lv}
+                                        checked={bp[result.lv - 2]===1}
+                                        onChange={e => updateBp(result.lv - 2, 1)} />
                                 
-                                    <input type="radio" name={'lv'+result.lv} checked={bp[result.lv - 2]===2} onChange={e => updateBp(result.lv - 2, 2)} />
+                                    <input
+                                        type="radio" 
+                                        disabled={(bp[result.lv - 2]!==2)&&(~~result.tgh>=~~((~~result.vtl+~~result.str+~~result.tgh+~~result.qui+~~result.mgc)/2))} 
+                                        name={'lv'+result.lv}
+                                        checked={bp[result.lv - 2]===2}
+                                        onChange={e => updateBp(result.lv - 2, 2)} />
                                 
-                                    <input type="radio" name={'lv'+result.lv} checked={bp[result.lv - 2]===3} onChange={e => updateBp(result.lv - 2, 3)} />
+                                    <input
+                                        type="radio" 
+                                        disabled={(bp[result.lv - 2]!==3)&&(~~result.qui>=~~((~~result.vtl+~~result.str+~~result.tgh+~~result.qui+~~result.mgc)/2))} 
+                                        name={'lv'+result.lv}
+                                        checked={bp[result.lv - 2]===3}
+                                        onChange={e => updateBp(result.lv - 2, 3)} />
                                 
-                                    <input type="radio" name={'lv'+result.lv} checked={bp[result.lv - 2]===4} onChange={e => updateBp(result.lv - 2, 4)} />
+                                    <input
+                                        type="radio" 
+                                        disabled={(bp[result.lv - 2]!==4)&&(~~result.mgc>=~~((~~result.vtl+~~result.str+~~result.tgh+~~result.qui+~~result.mgc)/2))} 
+                                        name={'lv'+result.lv}
+                                        checked={bp[result.lv - 2]===4}
+                                        onChange={e => updateBp(result.lv - 2, 4)} />
                                     </Stack>
                                 </TableCell>:
                                 <TableCell>{' '}</TableCell>}

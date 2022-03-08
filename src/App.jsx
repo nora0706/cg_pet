@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import './App.css';
 import ResultTable from './Components/ResultTable';
+import Alert from '@mui/material/Alert';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Simulator } from "./Util/Simulator";
@@ -73,15 +74,13 @@ function App(props) {
 
   const [growthRatio, setGrowthRatio] = useState(20);
   const [pointDist, setPointDist] = useState(BP.NONE);
+  const [pointDist2, setPointDist2] = useState(BP.NONE);
 
   const [errorMsg, setErrorMsg] = useState('');
 
   const [freeBp, setFreeBp] = useState(Array.from({ length: MAX_LEVEL-1 }, () => -1));
 
-  const [results, setResults] = useState(new Simulator(25, 25, 25, 25, 25,
-    0, 0, 0, 0, 0,
-    2, 2, 2, 2, 2,
-    20, BP.NONE).run(MAX_LEVEL, Array.from({ length: MAX_LEVEL }, () => -1)));
+  const [results, setResults] = useState(null);
   
 
   const [petList, setPetList] = useState([]);
@@ -106,7 +105,9 @@ function App(props) {
       ...existingItems.slice(0, i),
       val,
       ...existingItems.slice(i + 1),
-    ])
+    ]);
+    setPointDist(-1);
+    setPointDist2(-1);
   }
 
   const validate = (type, updateFunc, value, extraVal) => {
@@ -115,33 +116,33 @@ function App(props) {
     switch (type) {
       case TYPE.MAX:
         if (newValue < 0) {
-          setErrorMsg('BP cannot less than 0.');
+          setErrorMsg('BP 不能少於 0.');
           return;
-        } else if (newValue > 50) {
-          setErrorMsg('BP cannot larger than 50.');
+        } else if (newValue > 55) {
+          setErrorMsg('BP 不能大於 55.');
           return;
         }
         break;
       case TYPE.DROPPED:
         if (newValue < 0) {
-          setErrorMsg('Drop cannot less than 0.');
+          setErrorMsg('掉檔不能少於 0.');
           return;
         } else if (newValue > 4) {
-          setErrorMsg('Dropped cannot more than 4.');
+          setErrorMsg('掉檔不能大於 4.');
           return;
         }
         break;
       case TYPE.RANDOM:
         if (newValue < 0) {
-          setErrorMsg('Random cannot less than 0.');
+          setErrorMsg('隨機檔不能少於 0.');
           return;
         } else if (newValue + extraVal > 10) {
-          setErrorMsg('Random in total cannot more than 10.');
+          setErrorMsg('隨機檔總和不能大於 10.（請先把其他隨機檔減少）');
           return;
         }
         break;
       default:
-        console.log("Unknow type error")
+        console.log("")
         break;
     }
     updateFunc(newValue);
@@ -174,12 +175,12 @@ function App(props) {
     let simulator = new Simulator(maxVtl, maxStr, maxTgh, maxQui, maxMgc,
       droppedVtl, droppedStr, droppedTgh, droppedQui, droppedMgc,
       randomVtl, randomStr, randomTgh, randomQui, randomMgc,
-      growthRatio, pointDist);
+      growthRatio, pointDist, pointDist2);
     setResults(simulator.run(MAX_LEVEL, freeBp));
   }, [maxVtl, maxStr, maxTgh, maxQui, maxMgc,
     droppedVtl, droppedStr, droppedTgh, droppedQui, droppedMgc,
     randomVtl, randomStr, randomTgh, randomQui, randomMgc,
-    growthRatio, freeBp, pointDist]);
+    growthRatio, freeBp, pointDist, pointDist2]);
 
   return (
     <ThemeProvider className="App" theme={theme}>
@@ -249,25 +250,44 @@ function App(props) {
                 <TextField label="成長係數" size="small" id="growth_ratio" type="number" value={growthRatio} onChange={(e) => validate(TYPE.RATIO, setGrowthRatio, e.target.value)} />
                 {/* <span>{randomVtl + randomStr + randomTgh + randomQui + randomMgc}</span> */}
               </Stack>
-              <FormControl>
-                <FormLabel id="demo-row-radio-buttons-group-label">加點方式</FormLabel>
-                <RadioGroup
-                  row
-                  aria-labelledby="demo-row-radio-buttons-group-label"
-                  name="row-radio-buttons-group"
-                  value={pointDist}
-                  onChange={(e) => resetBP(e.target.value)}
-                >
-                  <FormControlLabel control={<Radio />} value={BP.NONE} label="不指定" />
-                  <FormControlLabel control={<Radio />} value={BP.VTL} label="體力" />
-                  <FormControlLabel control={<Radio />} value={BP.STR} label="力量" />
-                  <FormControlLabel control={<Radio />} value={BP.TGH} label="強度" />
-                  <FormControlLabel control={<Radio />} value={BP.QUI} label="速度" />
-                  <FormControlLabel control={<Radio />} value={BP.MGC} label="魔法" />
-                </RadioGroup>
-              </FormControl>
+              <Stack direction="row" spacing={6} >
+                <FormControl>
+                  <FormLabel id="bp-distribute">加點方式</FormLabel>
+                  <RadioGroup
+                    row
+                    aria-labelledby="bp-distribute"
+                    name="row-radio-buttons-group"
+                    value={pointDist}
+                    onChange={(e) => resetBP(e.target.value)}
+                  >
+                    <FormControlLabel control={<Radio />} value={BP.NONE} label="不指定" />
+                    <FormControlLabel control={<Radio />} value={BP.VTL} label="體力" />
+                    <FormControlLabel control={<Radio />} value={BP.STR} label="力量" />
+                    <FormControlLabel control={<Radio />} value={BP.TGH} label="強度" />
+                    <FormControlLabel control={<Radio />} value={BP.QUI} label="速度" />
+                    <FormControlLabel control={<Radio />} value={BP.MGC} label="魔法" />
+                  </RadioGroup>
+                </FormControl>
+                <FormControl>
+                  <FormLabel id="bp-distribute2">爆點處理</FormLabel>
+                  <RadioGroup
+                    row
+                    aria-labelledby="bp-distribute2"
+                    name="row-radio-buttons-group"
+                    value={pointDist2}
+                    onChange={(e) => { setPointDist2(parseInt(e.target.value, 10));resetBP(pointDist);}}
+                  >
+                    <FormControlLabel control={<Radio />} value={BP.NONE} label="不指定" />
+                    <FormControlLabel control={<Radio />} value={BP.VTL} label="體力" />
+                    <FormControlLabel control={<Radio />} value={BP.STR} label="力量" />
+                    <FormControlLabel control={<Radio />} value={BP.TGH} label="強度" />
+                    <FormControlLabel control={<Radio />} value={BP.QUI} label="速度" />
+                    <FormControlLabel control={<Radio />} value={BP.MGC} label="魔法" />
+                  </RadioGroup>
+                </FormControl>
+              </Stack>
             </Stack>
-            <div>{errorMsg}</div>
+            {errorMsg.length > 0 && <Alert severity="error">{errorMsg}</Alert>}
           </Container>
         </Box>
         <Container>
@@ -285,6 +305,9 @@ function App(props) {
             {' By 大福@初心摩羯 '}
             {new Date().getFullYear()}
             {'.'}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" align="center">
+            {'數據只供參考.'}
           </Typography>
           <Typography variant="body2" color="text.secondary" align="center">
           <Link color="inherit" href="https://github.com/nora0706/cg_pet/">
