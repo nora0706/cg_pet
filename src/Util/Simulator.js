@@ -77,6 +77,7 @@ export class Result{
         this.isOver = isOver;
         this.remainingBp = remainingBp;
         [this.hp,this.mp,this.atk,this.def,this.dex,this.spt,this.rec,] = BP2status([vtl,str,tgh,qui,mgc]);
+        this.checkSum = this.vtl+';'+this.str+';'+this.tgh+';'+this.qui+';'+this.mgc+';'+this.lv+';'+this.remainingBp;
     }
 }
 

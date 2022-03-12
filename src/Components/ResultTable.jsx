@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -7,6 +6,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+
+import ResultRow from './ResultRow';
 
 
 function ResultTable(props) {
@@ -49,66 +50,11 @@ function ResultTable(props) {
                 </TableHead>
                 <TableBody>
                     {results?.map((result) => (
-                        <TableRow
-                            key={result.lv}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 }}}
-                        >
-                            <TableCell component="th" scope="row" sx={result.lv > 1 && bp[result.lv - 2] === -1 && { color: 'error.main'}}>{result.lv}</TableCell>
-                            <TableCell className="vtl">{~~result.vtl}</TableCell>
-                            <TableCell className="str">{~~result.str}</TableCell>
-                            <TableCell className="tgh">{~~result.tgh}</TableCell>
-                            <TableCell className="qui">{~~result.qui}</TableCell>
-                            <TableCell className="mgc">{~~result.mgc}</TableCell>
-                            <TableCell className="hp">{result.hp.toFixed(2)}</TableCell>
-                            <TableCell className="mp">{result.mp.toFixed(2)}</TableCell>
-                            <TableCell className="atk">{result.atk.toFixed(2)}</TableCell>
-                            <TableCell className="def">{result.def.toFixed(2)}</TableCell>
-                            <TableCell className="dex">{result.dex.toFixed(2)}</TableCell>
-                            <TableCell className="spt" sx={result.spt.toFixed(2) >= 303 && { color: 'success.main' }}>{result.spt.toFixed(2)}</TableCell>
-                            <TableCell className="rec">{result.rec.toFixed(2)}</TableCell>
-                            {/* <TableCell className="is_over">{result.isOver ? 1 : 0}</TableCell> */}
-                            <TableCell className="remaining_bp">{result.remainingBp}</TableCell>
-                            {result.lv > 1 ?
-                                <TableCell className="bp_dist">
-                                    <Stack direction="row">
-                                    <input
-                                        type="radio" 
-                                        disabled={(bp[result.lv - 2]!==0)&&(~~result.vtl>=~~((~~result.vtl+~~result.str+~~result.tgh+~~result.qui+~~result.mgc)/2))} 
-                                        name={'lv'+result.lv}
-                                        checked={bp[result.lv - 2]===0}
-                                        onChange={e => updateBp(result.lv - 2, 0)} />
-                                
-                                    <input
-                                        type="radio" 
-                                        disabled={(bp[result.lv - 2]!==1)&&(~~result.str>=~~((~~result.vtl+~~result.str+~~result.tgh+~~result.qui+~~result.mgc)/2))} 
-                                        name={'lv'+result.lv}
-                                        checked={bp[result.lv - 2]===1}
-                                        onChange={e => updateBp(result.lv - 2, 1)} />
-                                
-                                    <input
-                                        type="radio" 
-                                        disabled={(bp[result.lv - 2]!==2)&&(~~result.tgh>=~~((~~result.vtl+~~result.str+~~result.tgh+~~result.qui+~~result.mgc)/2))} 
-                                        name={'lv'+result.lv}
-                                        checked={bp[result.lv - 2]===2}
-                                        onChange={e => updateBp(result.lv - 2, 2)} />
-                                
-                                    <input
-                                        type="radio" 
-                                        disabled={(bp[result.lv - 2]!==3)&&(~~result.qui>=~~((~~result.vtl+~~result.str+~~result.tgh+~~result.qui+~~result.mgc)/2))} 
-                                        name={'lv'+result.lv}
-                                        checked={bp[result.lv - 2]===3}
-                                        onChange={e => updateBp(result.lv - 2, 3)} />
-                                
-                                    <input
-                                        type="radio" 
-                                        disabled={(bp[result.lv - 2]!==4)&&(~~result.mgc>=~~((~~result.vtl+~~result.str+~~result.tgh+~~result.qui+~~result.mgc)/2))} 
-                                        name={'lv'+result.lv}
-                                        checked={bp[result.lv - 2]===4}
-                                        onChange={e => updateBp(result.lv - 2, 4)} />
-                                    </Stack>
-                                </TableCell>:
-                                <TableCell>{' '}</TableCell>}
-                        </TableRow>
+                        <ResultRow
+                            result={result}
+                            lvBp={bp[result.lv - 2]}
+                            updateBp={updateBp}
+                        />
                     ))}
                 </TableBody>
             </Table>

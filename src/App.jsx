@@ -112,7 +112,7 @@ function App(props) {
 
   const validate = (type, updateFunc, value, extraVal) => {
     setErrorMsg('');
-    let newValue = parseInt(value, 10);
+    let newValue = ~~value;
     switch (type) {
       case TYPE.MAX:
         if (newValue < 0) {
@@ -138,6 +138,15 @@ function App(props) {
           return;
         } else if (newValue + extraVal > 10) {
           setErrorMsg('隨機檔總和不能大於 10.（請先把其他隨機檔減少）');
+          return;
+        }
+        break;
+      case TYPE.RATIO:
+        if (newValue < 1) {
+          setErrorMsg('成長係數不能少於 1.');
+          return;
+        } else if (newValue > 100) {
+          setErrorMsg('成長係數不能大於 100.');
           return;
         }
         break;
@@ -220,39 +229,40 @@ function App(props) {
             </div>
             <Stack
               sx={{ pt: 4 }}
+              style={{ fontSize: '0.9em' }}
               spacing={2}
               justifyContent="center"
             >
               <Stack direction="row" spacing={2} >
-                <Typography style={{ width:100 }}>頂檔</Typography>
-                <TextField style={{ width: 100 }} label="體力" size="small" id="max_vtl" type="number" value={maxVtl} onChange={(e) => validate(TYPE.MAX, setMaxVtl, e.target.value)} />
-                <TextField style={{ width: 100 }} label="力量" size="small" id="max_str" type="number" value={maxStr} onChange={(e) => validate(TYPE.MAX, setMaxStr, e.target.value)} />
-                <TextField style={{ width: 100 }} label="強度" size="small" id="max_tgh" type="number" value={maxTgh} onChange={(e) => validate(TYPE.MAX, setMaxTgh, e.target.value)} />
-                <TextField style={{ width: 100 }} label="速度" size="small" id="max_qui" type="number" value={maxQui} onChange={(e) => validate(TYPE.MAX, setMaxQui, e.target.value)} />
-                <TextField style={{ width: 100 }} label="魔法" size="small" id="max_mgc" type="number" value={maxMgc} onChange={(e) => validate(TYPE.MAX, setMaxMgc, e.target.value)} />
+                <Typography style={{ fontSize: '0.9em', width:80 }}>頂檔</Typography>
+                <TextField inputProps={{style: {fontSize:'0.9em'}}} InputLabelProps={{style: {fontSize:'0.9em'}}} style={{ width: 80 }} label="體力" size="small" id="max_vtl" type="number" value={maxVtl} onChange={(e) => validate(TYPE.MAX, setMaxVtl, e.target.value)} />
+                <TextField inputProps={{style: {fontSize:'0.9em'}}} InputLabelProps={{style: {fontSize:'0.9em'}}} style={{ width: 80 }} label="力量" size="small" id="max_str" type="number" value={maxStr} onChange={(e) => validate(TYPE.MAX, setMaxStr, e.target.value)} />
+                <TextField inputProps={{style: {fontSize:'0.9em'}}} InputLabelProps={{style: {fontSize:'0.9em'}}} style={{ width: 80 }} label="強度" size="small" id="max_tgh" type="number" value={maxTgh} onChange={(e) => validate(TYPE.MAX, setMaxTgh, e.target.value)} />
+                <TextField inputProps={{style: {fontSize:'0.9em'}}} InputLabelProps={{style: {fontSize:'0.9em'}}} style={{ width: 80 }} label="速度" size="small" id="max_qui" type="number" value={maxQui} onChange={(e) => validate(TYPE.MAX, setMaxQui, e.target.value)} />
+                <TextField inputProps={{style: {fontSize:'0.9em'}}} InputLabelProps={{style: {fontSize:'0.9em'}}} style={{ width: 80 }} label="魔法" size="small" id="max_mgc" type="number" value={maxMgc} onChange={(e) => validate(TYPE.MAX, setMaxMgc, e.target.value)} />
               </Stack>
               <Stack direction="row" spacing={2}>
-                <Typography style={{ width:100 }}>掉檔</Typography>
-                <TextField style={{ width: 100 }} label="體力" size="small" id="dropped_vtl" type="number" value={droppedVtl} onChange={(e) => validate(TYPE.DROPPED, setDroppedVtl, e.target.value)} />
-                <TextField style={{ width: 100 }} label="力量" size="small" id="dropped_str" type="number" value={droppedStr} onChange={(e) => validate(TYPE.DROPPED, setDroppedStr, e.target.value)} />
-                <TextField style={{ width: 100 }} label="強度" size="small" id="dropped_tgh" type="number" value={droppedTgh} onChange={(e) => validate(TYPE.DROPPED, setDroppedTgh, e.target.value)} />
-                <TextField style={{ width: 100 }} label="速度" size="small" id="dropped_qui" type="number" value={droppedQui} onChange={(e) => validate(TYPE.DROPPED, setDroppedQui, e.target.value)} />
-                <TextField style={{ width: 100 }} label="魔法" size="small" id="dropped_mgc" type="number" value={droppedMgc} onChange={(e) => validate(TYPE.DROPPED, setDroppedMgc, e.target.value)} />
+                <Typography style={{ fontSize: '0.9em', width:80 }}>掉檔</Typography>
+                <TextField inputProps={{style: {fontSize:'0.9em'}}} InputLabelProps={{style: {fontSize:'0.9em'}}} style={{ width: 80 }} label="體力" size="small" id="dropped_vtl" type="number" value={droppedVtl} onChange={(e) => validate(TYPE.DROPPED, setDroppedVtl, e.target.value)} />
+                <TextField inputProps={{style: {fontSize:'0.9em'}}} InputLabelProps={{style: {fontSize:'0.9em'}}} style={{ width: 80 }} label="力量" size="small" id="dropped_str" type="number" value={droppedStr} onChange={(e) => validate(TYPE.DROPPED, setDroppedStr, e.target.value)} />
+                <TextField inputProps={{style: {fontSize:'0.9em'}}} InputLabelProps={{style: {fontSize:'0.9em'}}} style={{ width: 80 }} label="強度" size="small" id="dropped_tgh" type="number" value={droppedTgh} onChange={(e) => validate(TYPE.DROPPED, setDroppedTgh, e.target.value)} />
+                <TextField inputProps={{style: {fontSize:'0.9em'}}} InputLabelProps={{style: {fontSize:'0.9em'}}} style={{ width: 80 }} label="速度" size="small" id="dropped_qui" type="number" value={droppedQui} onChange={(e) => validate(TYPE.DROPPED, setDroppedQui, e.target.value)} />
+                <TextField inputProps={{ style: { fontSize: '0.9em' } }} InputLabelProps={{ style: { fontSize: '0.9em' } }} style={{ width: 80 }} label="魔法" size="small" id="dropped_mgc" type="number" value={droppedMgc} onChange={(e) => validate(TYPE.DROPPED, setDroppedMgc, e.target.value)} />
                 {/* <span>{droppedVtl + droppedStr + droppedTgh + droppedQui + droppedMgc}</span> */}
               </Stack>
               <Stack direction="row" spacing={2}>
-                <Typography style={{ width:100 }}>隨機檔</Typography>
-                <TextField style={{ width: 100 }} label="體力" size="small" id="random_vtl" type="number" value={randomVtl} onChange={(e) => validate(TYPE.RANDOM, setRandomVtl, e.target.value, (randomStr + randomTgh + randomQui + randomMgc))} />
-                <TextField style={{ width: 100 }} label="力量" size="small" id="random_str" type="number" value={randomStr} onChange={(e) => validate(TYPE.RANDOM, setRandomStr, e.target.value, (randomVtl + randomTgh + randomQui + randomMgc))} />
-                <TextField style={{ width: 100 }} label="強度" size="small" id="random_tgh" type="number" value={randomTgh} onChange={(e) => validate(TYPE.RANDOM, setRandomTgh, e.target.value, (randomVtl + randomStr + randomQui + randomMgc))} />
-                <TextField style={{ width: 100 }} label="速度" size="small" id="random_qui" type="number" value={randomQui} onChange={(e) => validate(TYPE.RANDOM, setRandomQui, e.target.value, (randomVtl + randomStr + randomTgh + randomMgc))} />
-                <TextField style={{ width: 100 }} label="魔法" size="small" id="random_mgc" type="number" value={randomMgc} onChange={(e) => validate(TYPE.RANDOM, setRandomMgc, e.target.value, (randomVtl + randomStr + randomTgh + randomQui))} />
-                <TextField label="成長係數" size="small" id="growth_ratio" type="number" value={growthRatio} onChange={(e) => validate(TYPE.RATIO, setGrowthRatio, e.target.value)} />
+                <Typography style={{ fontSize: '0.9em', width:80 }}>隨機檔</Typography>
+                <TextField inputProps={{style: {fontSize:'0.9em'}}} InputLabelProps={{style: {fontSize:'0.9em'}}} style={{ width: 80 }} label="體力" size="small" id="random_vtl" type="number" value={randomVtl} onChange={(e) => validate(TYPE.RANDOM, setRandomVtl, e.target.value, (randomStr + randomTgh + randomQui + randomMgc))} />
+                <TextField inputProps={{style: {fontSize:'0.9em'}}} InputLabelProps={{style: {fontSize:'0.9em'}}} style={{ width: 80 }} label="力量" size="small" id="random_str" type="number" value={randomStr} onChange={(e) => validate(TYPE.RANDOM, setRandomStr, e.target.value, (randomVtl + randomTgh + randomQui + randomMgc))} />
+                <TextField inputProps={{style: {fontSize:'0.9em'}}} InputLabelProps={{style: {fontSize:'0.9em'}}} style={{ width: 80 }} label="強度" size="small" id="random_tgh" type="number" value={randomTgh} onChange={(e) => validate(TYPE.RANDOM, setRandomTgh, e.target.value, (randomVtl + randomStr + randomQui + randomMgc))} />
+                <TextField inputProps={{style: {fontSize:'0.9em'}}} InputLabelProps={{style: {fontSize:'0.9em'}}} style={{ width: 80 }} label="速度" size="small" id="random_qui" type="number" value={randomQui} onChange={(e) => validate(TYPE.RANDOM, setRandomQui, e.target.value, (randomVtl + randomStr + randomTgh + randomMgc))} />
+                <TextField inputProps={{style: {fontSize:'0.9em'}}} InputLabelProps={{style: {fontSize:'0.9em'}}} style={{ width: 80 }} label="魔法" size="small" id="random_mgc" type="number" value={randomMgc} onChange={(e) => validate(TYPE.RANDOM, setRandomMgc, e.target.value, (randomVtl + randomStr + randomTgh + randomQui))} />
+                <TextField inputProps={{style: {fontSize:'0.9em'}}} InputLabelProps={{style: {fontSize:'0.9em'}}} style={{ width: 80 }} label="成長係數" size="small" id="growth_ratio" type="number" value={growthRatio} onChange={(e) => validate(TYPE.RATIO, setGrowthRatio, e.target.value)} />
                 {/* <span>{randomVtl + randomStr + randomTgh + randomQui + randomMgc}</span> */}
               </Stack>
               <Stack direction="row" spacing={6} >
                 <FormControl>
-                  <FormLabel id="bp-distribute">加點方式</FormLabel>
+                  <FormLabel style={{ fontSize: '0.9em' }} id="bp-distribute">加點方式</FormLabel>
                   <RadioGroup
                     row
                     aria-labelledby="bp-distribute"
@@ -260,16 +270,16 @@ function App(props) {
                     value={pointDist}
                     onChange={(e) => resetBP(e.target.value)}
                   >
-                    <FormControlLabel control={<Radio />} value={BP.NONE} label="不指定" />
-                    <FormControlLabel control={<Radio />} value={BP.VTL} label="體力" />
-                    <FormControlLabel control={<Radio />} value={BP.STR} label="力量" />
-                    <FormControlLabel control={<Radio />} value={BP.TGH} label="強度" />
-                    <FormControlLabel control={<Radio />} value={BP.QUI} label="速度" />
-                    <FormControlLabel control={<Radio />} value={BP.MGC} label="魔法" />
+                    <FormControlLabel control={<Radio size="small" />} value={BP.NONE} label={<Typography sx={{fontSize: '0.9em'}}>不指定</Typography>} />
+                    <FormControlLabel control={<Radio size="small" />} value={BP.VTL} label={<Typography sx={{fontSize: '0.9em'}}>體力</Typography>} />
+                    <FormControlLabel control={<Radio size="small" />} value={BP.STR} label={<Typography sx={{fontSize: '0.9em'}}>力量</Typography>} />
+                    <FormControlLabel control={<Radio size="small" />} value={BP.TGH} label={<Typography sx={{fontSize: '0.9em'}}>強度</Typography>} />
+                    <FormControlLabel control={<Radio size="small" />} value={BP.QUI} label={<Typography sx={{fontSize: '0.9em'}}>速度</Typography>} />
+                    <FormControlLabel control={<Radio size="small" />} value={BP.MGC} label={<Typography sx={{fontSize: '0.9em'}}>魔法</Typography>} />
                   </RadioGroup>
                 </FormControl>
                 <FormControl>
-                  <FormLabel id="bp-distribute2">爆點處理</FormLabel>
+                  <FormLabel style={{ fontSize: '0.9em' }} id="bp-distribute2">爆點處理</FormLabel>
                   <RadioGroup
                     row
                     aria-labelledby="bp-distribute2"
@@ -277,12 +287,12 @@ function App(props) {
                     value={pointDist2}
                     onChange={(e) => { setPointDist2(parseInt(e.target.value, 10));resetBP(pointDist);}}
                   >
-                    <FormControlLabel control={<Radio />} value={BP.NONE} label="不指定" />
-                    <FormControlLabel control={<Radio />} value={BP.VTL} label="體力" />
-                    <FormControlLabel control={<Radio />} value={BP.STR} label="力量" />
-                    <FormControlLabel control={<Radio />} value={BP.TGH} label="強度" />
-                    <FormControlLabel control={<Radio />} value={BP.QUI} label="速度" />
-                    <FormControlLabel control={<Radio />} value={BP.MGC} label="魔法" />
+                    <FormControlLabel control={<Radio size="small" />} value={BP.NONE} label={<Typography sx={{fontSize: '0.9em'}}>不指定</Typography>} />
+                    <FormControlLabel control={<Radio size="small" />} value={BP.VTL} label={<Typography sx={{fontSize: '0.9em'}}>體力</Typography>} />
+                    <FormControlLabel control={<Radio size="small" />} value={BP.STR} label={<Typography sx={{fontSize: '0.9em'}}>力量</Typography>} />
+                    <FormControlLabel control={<Radio size="small" />} value={BP.TGH} label={<Typography sx={{fontSize: '0.9em'}}>強度</Typography>} />
+                    <FormControlLabel control={<Radio size="small" />} value={BP.QUI} label={<Typography sx={{fontSize: '0.9em'}}>速度</Typography>} />
+                    <FormControlLabel control={<Radio size="small" />} value={BP.MGC} label={<Typography sx={{fontSize: '0.9em'}}>魔法</Typography>} />
                   </RadioGroup>
                 </FormControl>
               </Stack>
