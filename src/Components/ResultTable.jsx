@@ -54,6 +54,7 @@ function ResultTable(props) {
                             result={result}
                             lvBp={bp[result.lv - 2]}
                             updateBp={updateBp}
+                            key={result.lv}
                         />
                     ))}
                 </TableBody>

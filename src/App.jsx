@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 
 import './App.css';
 import ResultTable from './Components/ResultTable';
+import LoadList from './Components/LoadList';
+import { Simulator } from "./Util/Simulator";
+
 import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Simulator } from "./Util/Simulator";
 import CssBaseline from '@mui/material/CssBaseline';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
@@ -24,6 +27,7 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Link from '@mui/material/Link';
+import Modal from '@mui/material/Modal';
 
 
 const MAX_LEVEL = 120;
@@ -43,6 +47,7 @@ const BP = {
 }
 
 function App(props) {
+  const { db } = props;
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
   const theme = React.useMemo(
@@ -54,6 +59,10 @@ function App(props) {
       }),
     [prefersDarkMode],
   );
+
+  const [name, setName] = useState('');
+  const [dbRecord, setDbRecord] = useState(null);
+
   const [maxVtl, setMaxVtl] = useState(25);
   const [maxStr, setMaxStr] = useState(25);
   const [maxTgh, setMaxTgh] = useState(25);
@@ -85,6 +94,11 @@ function App(props) {
 
   const [petList, setPetList] = useState([]);
   const [petListLoading, setPetListLoading] = useState(true);
+
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   useEffect(() => {
     if (petList.length === 0){
       setPetListLoading(true);
@@ -162,6 +176,81 @@ function App(props) {
     let newDist = Array.from({ length: MAX_LEVEL }, () => newPointDist);
     setFreeBp(newDist);
   }
+  const save = () => {
+    const data = {
+      name,
+      maxVtl,
+      maxStr,
+      maxTgh,
+      maxQui,
+      maxMgc,
+      droppedVtl,
+      droppedStr,
+      droppedTgh,
+      droppedQui,
+      droppedMgc,
+      randomVtl,
+      randomStr,
+      randomTgh,
+      randomQui,
+      randomMgc,
+      growthRatio,
+      pointDist,
+      pointDist2,
+      freeBp,
+    }
+    db.save(data, setErrorMsg);
+  }
+  const update = () => {
+    const data = {
+      name,
+      maxVtl,
+      maxStr,
+      maxTgh,
+      maxQui,
+      maxMgc,
+      droppedVtl,
+      droppedStr,
+      droppedTgh,
+      droppedQui,
+      droppedMgc,
+      randomVtl,
+      randomStr,
+      randomTgh,
+      randomQui,
+      randomMgc,
+      growthRatio,
+      pointDist,
+      pointDist2,
+      freeBp,
+    }
+    db.update(data, setErrorMsg);}
+
+  const load = (pet) => {
+    setName(pet.name);
+    setMaxVtl(pet.maxVtl);
+    setMaxStr(pet.maxStr);
+    setMaxTgh(pet.maxTgh);
+    setMaxQui(pet.maxQui);
+    setMaxMgc(pet.maxMgc);
+    setDroppedVtl(pet.droppedVtl);
+    setDroppedStr(pet.droppedStr);
+    setDroppedTgh(pet.droppedTgh);
+    setDroppedQui(pet.droppedQui);
+    setDroppedMgc(pet.droppedMgc);
+    setRandomVtl(pet.randomVtl);
+    setRandomStr(pet.randomStr);
+    setRandomTgh(pet.randomTgh);
+    setRandomQui(pet.randomQui);
+    setRandomMgc(pet.randomMgc);
+    setGrowthRatio(pet.growthRatio);
+    setPointDist(pet.pointDist);
+    setPointDist2(pet.pointDist2);
+    setFreeBp(pet.freeBp);
+    setDbRecord(pet);
+    
+    handleClose();
+  }
 
   const loadPet = (petName) => {
     if (petName.length === 0) return false;
@@ -172,6 +261,7 @@ function App(props) {
       }
     }).then(body => body.json()
     ).then(pet => {
+      setName(pet.name);
       setMaxVtl(pet.VTL);
       setMaxStr(pet.STR);
       setMaxTgh(pet.TGH);
@@ -192,7 +282,7 @@ function App(props) {
     growthRatio, freeBp, pointDist, pointDist2]);
 
   return (
-    <ThemeProvider className="App" theme={theme}>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
       <AppBar position="relative">
         <Toolbar>
@@ -211,28 +301,50 @@ function App(props) {
           }}
         >
           <Container>
-            <div>
-              <Autocomplete
-                disablePortal
-                id="pet-list"
-                loading={petListLoading}
-                autoHighlight
-                autoSelect
-                blurOnSelect
-                options={petList}
-                sx={{ width: 300 }}
-                onChange={(event, newValue) => {
-                  loadPet(newValue);
-                }}
-                renderInput={(params) => <TextField {...params} label="寵物名稱" />}
-              />
-            </div>
             <Stack
               sx={{ pt: 4 }}
               style={{ fontSize: '0.9em' }}
               spacing={2}
               justifyContent="center"
             >
+              <Stack direction="row" spacing={2}>
+                <Autocomplete
+                  disablePortal
+                  id="pet-list"
+                  loading={petListLoading}
+                  autoHighlight
+                  autoSelect
+                  blurOnSelect
+                  options={petList}
+                  sx={{ width: 300 }}
+                  onChange={(event, newValue) => {
+                    loadPet(newValue);
+                  }}
+                  renderInput={(params) => <TextField {...params} label="尋找寵物" />}
+                />
+                <TextField label="自訂名稱" id="pet_name" value={name} onChange={(e) => setName(e.target.value)} />
+                <Button variant="contained" onClick={save} size="small">
+                  儲存
+                </Button>
+                {dbRecord && (<Button variant="contained" onClick={update} size="small">
+                  更新
+                </Button>)}
+                <Button variant="contained" onClick={handleOpen} size="small">
+                  載入
+                </Button>
+                <Modal
+                  open={open}
+                  onClose={handleClose}
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
+                >
+                  <LoadList 
+                    db={db}
+                    loadPet= {load}
+                    setMsg = {setErrorMsg}
+                  />
+                </Modal>
+              </Stack>
               <Stack direction="row" spacing={2} >
                 <Typography style={{ fontSize: '0.9em', width:80 }}>頂檔</Typography>
                 <TextField inputProps={{style: {fontSize:'0.9em'}}} InputLabelProps={{style: {fontSize:'0.9em'}}} style={{ width: 80 }} label="體力" size="small" id="max_vtl" type="number" value={maxVtl} onChange={(e) => validate(TYPE.MAX, setMaxVtl, e.target.value)} />
