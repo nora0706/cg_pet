@@ -429,7 +429,7 @@ function App(props) {
             {'.'}
           </Typography>
           <Typography variant="body2" color="text.secondary" align="center">
-            {'數據只供參考.'}
+            {'數值以初心版本為準，數據只供參考。'}
           </Typography>
           <Typography variant="body2" color="text.secondary" align="center">
           <Link color="inherit" href="https://github.com/nora0706/cg_pet/">
